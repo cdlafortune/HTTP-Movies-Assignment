@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, Link, useHistory} from "react-router-dom";
 import MovieCard from "./MovieCard";
+import EditMovie from "./EditMovie";
 
-function Movie({ addToSavedList, updateMovies, getMovies }) {
+function Movie({ addToSavedList}) {
   const [movie, setMovie] = useState(null);
   const params = useParams();
-  const [editing, setEditing] = useState(false);
+  const history = useHistory();
 
   const fetchMovie = (id) => {
     axios
@@ -19,17 +20,14 @@ function Movie({ addToSavedList, updateMovies, getMovies }) {
     addToSavedList(movie);
   };
 
-  const editMovie = () => {
-    setEditing(true);
-  };
+  
 
   const deleteMovie = (e) => {
     e.preventDefault();
-    axios.delete(`http://localhost:5000/api/movies/${movie.id}`)
+    axios.delete(`http://localhost:5000/api/movies/${params.id}`)
       .then(res => {
         console.log(res);
-        setMovie(res.data);
-
+        history.push('/');
       })
   }
 
@@ -47,8 +45,16 @@ function Movie({ addToSavedList, updateMovies, getMovies }) {
     <div className="save-wrapper">
       <MovieCard movie={movie} />
 
-      <div className="save-button" onClick={saveMovie}>
+      <div className="btn" onClick={saveMovie}>
         Save
+      </div>
+
+      <Link className="edit-btn" to={`/edit-movie/${params.id}`} >
+        Edit
+      </Link>
+
+      <div className="delete-btn" onClick={deleteMovie}>
+        Delete
       </div>
     </div>
   );
